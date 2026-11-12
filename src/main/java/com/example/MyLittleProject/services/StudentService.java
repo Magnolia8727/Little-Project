@@ -28,8 +28,7 @@ public class StudentService {
 
         }
 
-        studentRepository.save(student);
-        return student;
+       return studentRepository.save(student);
     }
 
 
