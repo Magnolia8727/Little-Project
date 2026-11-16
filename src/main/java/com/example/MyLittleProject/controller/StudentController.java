@@ -2,6 +2,8 @@ package com.example.MyLittleProject.controller;
 
 
 import com.example.MyLittleProject.Gender;
+import com.example.MyLittleProject.dto.request.StudentRequest;
+import com.example.MyLittleProject.dto.response.StudentResponse;
 import com.example.MyLittleProject.models.Student;
 import com.example.MyLittleProject.services.StudentService;
 import jakarta.validation.Valid;
@@ -33,53 +35,53 @@ public class StudentController {
 
     // @Valid , spring will enforce those rules i made directly in the models e.g NotBlanl , @Email
     @PostMapping()
-    public Student save(@Valid @RequestBody Student student)
+    public StudentResponse save(@Valid @RequestBody StudentRequest student, @RequestParam(required = false) Integer courseId)
     {
 
-        return studentService.save(student);
+        return studentService.save(student,courseId);
     }
 
 
     // @Valid is not requuired in Put methods, itll want everything filled at max
     @PutMapping("/{studentNumber}")
-    public Student update (@PathVariable long studentNumber, @RequestBody Student student)
+    public StudentResponse update (@PathVariable long studentNumber, @RequestBody StudentRequest student)
     {
         return studentService.updateById(studentNumber, student);
     }
 
     @PutMapping("/email/{email}")
-    public Student updateByEmail(@PathVariable String email, @RequestBody Student student)
+    public StudentResponse updateByEmail(@PathVariable String email, @RequestBody StudentRequest student)
     {
         return studentService.updateByEmail(email, student);
     }
 
     @GetMapping
-    public List<Student> findAll()
+    public List<StudentResponse> findAll()
     {
         return studentService.findAll();
     }
 
     @GetMapping("/{studentNumber}")
-    public Student findById( @PathVariable long studentNumber )
+    public StudentResponse findById( @PathVariable long studentNumber )
     {
         return studentService.findByID(studentNumber);
     }
 
     @GetMapping("/email/{email}")
-    public Student findByEmail(@PathVariable String email)
+    public StudentResponse findByEmail(@PathVariable String email)
     {
         return studentService.findByEmail(email);
     }
 
     @GetMapping("/gender/{gender}")
-    public List<Student> findByGender(@PathVariable Gender gender)
+    public List<StudentResponse> findByGender(@PathVariable Gender gender)
     {
 
         return studentService.findByGender(gender);
     }
 
     @GetMapping("/age/{min}/{max}")
-    public List<Student> findByAgeBetween(@PathVariable int min, @PathVariable int max){
+    public List<StudentResponse> findByAgeBetween(@PathVariable int min, @PathVariable int max){
 
         return studentService.findByAgeBetween(min, max);
 
@@ -97,7 +99,5 @@ public class StudentController {
     {
         studentService.deleteByEmail(email);
     }
-
-
 
 }

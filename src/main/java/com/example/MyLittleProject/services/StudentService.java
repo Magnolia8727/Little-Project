@@ -2,6 +2,11 @@ package com.example.MyLittleProject.services;
 
 
 import com.example.MyLittleProject.Gender;
+import com.example.MyLittleProject.dto.request.StudentRequest;
+import com.example.MyLittleProject.dto.response.StudentResponse;
+import com.example.MyLittleProject.mapper.StudentMapper;
+import com.example.MyLittleProject.models.Course;
+import com.example.MyLittleProject.repository.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -19,144 +24,101 @@ public class StudentService {
 
     // i dont give it a body coz it uses lombk for constructor @RequiredArgsConstructor
     private final StudentRepository studentRepository;
+    private final StudentMapper mapper;
+    private final CourseRepository courseRepository;
 
-    public Student save(Student student){
+    public StudentResponse save(StudentRequest request, Integer courseId) {
 
-        if(studentRepository.existsById(student.getStudentNumber()) || studentRepository.existsByEmail(student.getEmail())){
+        if(studentRepository.existsById(request.getStudentNumber()) || studentRepository.existsByEmail(request.getEmail())){
 
             throw new RuntimeException("Student already exists");
 
         }
+        Course course = null;
 
-       return studentRepository.save(student);
+        if (courseId != null) {
+             course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found")  );
+        }
+
+
+        Student student = mapper.toEntity(request,course);
+        Student savedStudent = studentRepository.save(student);
+         return mapper.toResponse(savedStudent);
+
     }
 
 
-    public Student updateById(long studentNumber, Student student) {
+    public StudentResponse updateById(long studentNumber, StudentRequest request) {
         if (!studentRepository.existsById(studentNumber)) {
            throw  new RuntimeException("Student number not found, try signing in first");
         }
 
         Student currentStudent = studentRepository.findById(studentNumber).get();
-
-        if (student.getEmail() != null)
-        {
-            currentStudent.setEmail(student.getEmail());
-        }
-
-        if (student.getFirstName() != null)
-        {
-            currentStudent.setFirstName(student.getFirstName());
-        }
-
-        if (student.getLastName() != null)
-        {
-            currentStudent.setLastName(student.getLastName());
-        }
-
-        if(student.getGender() != null)
-        {
-            currentStudent.setGender(student.getGender());
-        }
-
-        if(student.getDateOfBirth() != null)
-        {
-            currentStudent.setDateOfBirth(student.getDateOfBirth());
-        }
-
-        if (student.getAge() >= 5 && student.getAge() <= 30)
-        {
-            currentStudent.setAge(student.getAge());
-        }
-
-
-        return studentRepository.save(currentStudent);
+        mapper.updateEntityFromRequest(currentStudent, request);
+        Student updateStudent = studentRepository.save(currentStudent);
+        return mapper.toResponse(updateStudent);
 
     }
 
-    public Student updateByEmail(String email, Student student) {
+    public StudentResponse updateByEmail(String email, StudentRequest request) {
         if (!studentRepository.existsByEmail(email)) {
             throw  new RuntimeException("email not found, try signing in first");
         }
 
         Student currentStudent = studentRepository.findByEmail(email).get();
+        mapper.updateEntityFromRequest(currentStudent,request);
+        Student updateStudent = studentRepository.save(currentStudent);
 
-        if (student.getEmail() != null)
-        {
-            currentStudent.setEmail(student.getEmail());
-        }
-
-        if (student.getFirstName() != null)
-        {
-            currentStudent.setFirstName(student.getFirstName());
-        }
-
-        if (student.getLastName() != null)
-        {
-            currentStudent.setLastName(student.getLastName());
-        }
-
-        if(student.getGender() != null)
-        {
-            currentStudent.setGender(student.getGender());
-        }
-
-        if(student.getDateOfBirth() != null)
-        {
-            currentStudent.setDateOfBirth(student.getDateOfBirth());
-        }
-
-        if (student.getAge() >= 5 && student.getAge() <= 30)
-        {
-            currentStudent.setAge(student.getAge());
-        }
-
-
-        return studentRepository.save(currentStudent);
+        return mapper.toResponse(updateStudent);
 
     }
 
-    public List<Student> findAll(){
-        return studentRepository.findAll();
+    public List<StudentResponse> findAll(){
+
+        return studentRepository.findAll().stream().map(mapper::toResponse).toList();
+
     }
 
-    public Student findByID(long studentNumber)
+    public StudentResponse findByID(long studentNumber)
     {
         if (!studentRepository.existsById(studentNumber))
         {
             throw new RuntimeException("Student number not found, try signing in first");
         }
 
-        return studentRepository.findById(studentNumber).get();
+        StudentResponse studentResponse = mapper.toResponse(studentRepository.findById(studentNumber).get());
+
+        return studentResponse;
 
     }
 
-    public Student findByEmail(String email)
+    public StudentResponse findByEmail(String email)
     {
         if (!studentRepository.existsByEmail(email))
         {
             throw new RuntimeException("Email not found, try signing in first");
         }
 
-        return studentRepository.findByEmail(email).get();
+        StudentResponse studentResponse = mapper.toResponse(studentRepository.findByEmail(email).get());
+
+        return studentResponse;
+    }
+
+    public List<StudentResponse> findByGender (Gender gender)
+    {
+
+        return studentRepository.findByGender(gender).stream().map(mapper::toResponse).toList();
 
     }
 
-    public List<Student> findByGender (Gender gender)
+    public List<StudentResponse> findByAgeBetween(int min, int max)
     {
-
-        return studentRepository.findByGender(gender);
-
+        return studentRepository.findByAgeBetween(min, max).stream().map(mapper::toResponse).toList();
     }
 
-    public List<Student> findByAgeBetween(int min, int max)
+    public List <StudentResponse> findByDateOfBirthBetween (LocalDate date, LocalDate later)
     {
-        return studentRepository.findByAgeBetween(min, max);
-    }
-
-    public List <Student> findByDateOfBirthBetween (LocalDate date, LocalDate later)
-    {
-        return studentRepository.findByDateOfBirthBetween(date, later);
+        return studentRepository.findByDateOfBirthBetween(date, later).stream().map(mapper::toResponse).toList();
     }
 
     public String deleteById(long studentNumber)

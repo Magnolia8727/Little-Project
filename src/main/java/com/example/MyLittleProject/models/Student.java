@@ -5,7 +5,6 @@ package com.example.MyLittleProject.models;
 
 import com.example.MyLittleProject.Gender;
 import jakarta.persistence.*; // all abt database annotations that tells database that the model must be an entity
-import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.*;
 
@@ -24,25 +23,24 @@ public class Student {
     // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long studentNumber;
 
-    @NotBlank(message = "First Name is required")
     private String firstName;
 
-    @NotBlank(message = "Last Name is required") // from validation dependecency to validate
     private String lastName;
 
-    @Past // ensures that date is always in the past, @Future ensures that date is always in the future
     private LocalDate dateOfBirth;
 
-    @Min(value = 5, message = "Age must be atleast 5")
-    @Max(value = 30, message = "AGe must be below 30")
+
     private int age;
 
     @Enumerated(EnumType.STRING) // used if you add java enum field, if u work enums you want to work with
     private Gender gender;
 
-    @Email
-    @NotBlank(message = "Email is required")
+
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @CreationTimestamp // from hibernate.annotations to create timestamp
     // @UpdateTimestamp this one is for updating
