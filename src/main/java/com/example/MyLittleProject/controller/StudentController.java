@@ -44,7 +44,7 @@ public class StudentController {
 
     // @Valid is not requuired in Put methods, itll want everything filled at max
     @PutMapping("/{studentNumber}")
-    public StudentResponse update (@PathVariable long studentNumber, @RequestBody StudentRequest student)
+    public StudentResponse update (@PathVariable Long studentNumber, @RequestBody StudentRequest student)
     {
         return studentService.updateById(studentNumber, student);
     }
@@ -67,6 +67,12 @@ public class StudentController {
         return studentService.findByID(studentNumber);
     }
 
+    @GetMapping("/me")
+    public StudentResponse getMyProfile()
+    {
+        return studentService.getMyProfile();
+    }
+
     @GetMapping("/email/{email}")
     public StudentResponse findByEmail(@PathVariable String email)
     {
@@ -81,14 +87,14 @@ public class StudentController {
     }
 
     @GetMapping("/age/{min}/{max}")
-    public List<StudentResponse> findByAgeBetween(@PathVariable int min, @PathVariable int max){
+    public List<StudentResponse> findByAgeBetween(@PathVariable Integer min, @PathVariable int max){
 
         return studentService.findByAgeBetween(min, max);
 
     }
 
     @DeleteMapping("/{studentNumber}")
-    public void delete(@PathVariable long studentNumber)
+    public void delete(@PathVariable Long studentNumber)
     {
         studentService.deleteById(studentNumber);
     }

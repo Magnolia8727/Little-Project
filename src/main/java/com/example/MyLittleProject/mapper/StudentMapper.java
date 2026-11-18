@@ -65,7 +65,7 @@ public class StudentMapper {
         if (request.getDateOfBirth() != null) {
             currentStudent.setDateOfBirth(request.getDateOfBirth());
         }
-        if (request.getAge() >= 5 && request.getAge() <= 30) {
+        if ( request.getAge() != null && request.getAge() >= 5 && request.getAge() <= 30) {
             currentStudent.setAge(request.getAge());
         }
 

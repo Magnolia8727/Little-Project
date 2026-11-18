@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class StudentRequest {
 
-    private long studentNumber;
+    private Long studentNumber;
 
     @NotBlank(message = "First Name is required")
     private String firstName;
@@ -26,7 +26,7 @@ public class StudentRequest {
 
     @Min(value = 5, message = "Age must be at least 5")
     @Max(value = 45 , message = "Age must be below 45")
-    private int age;
+    private Integer age;
 
     private Gender gender;
 

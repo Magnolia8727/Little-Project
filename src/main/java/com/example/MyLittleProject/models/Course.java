@@ -34,6 +34,7 @@ public class Course {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @OneToMany
     private List<Student> students = new ArrayList<>();
 
     @CreationTimestamp

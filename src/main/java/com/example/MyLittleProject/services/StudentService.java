@@ -4,12 +4,16 @@ package com.example.MyLittleProject.services;
 import com.example.MyLittleProject.Gender;
 import com.example.MyLittleProject.dto.request.StudentRequest;
 import com.example.MyLittleProject.dto.response.StudentResponse;
+import com.example.MyLittleProject.exception.ResourceNotFoundException;
 import com.example.MyLittleProject.mapper.StudentMapper;
+import com.example.MyLittleProject.models.AppUser;
 import com.example.MyLittleProject.models.Course;
+import com.example.MyLittleProject.repository.AppUserRepository;
 import com.example.MyLittleProject.repository.CourseRepository;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.example.MyLittleProject.repository.StudentRepository;
 import com.example.MyLittleProject.models.Student;
@@ -26,7 +30,7 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final StudentMapper mapper;
     private final CourseRepository courseRepository;
-
+    private final AppUserRepository appUserRepository;
     public StudentResponse save(StudentRequest request, Integer courseId) {
 
         if(studentRepository.existsById(request.getStudentNumber()) || studentRepository.existsByEmail(request.getEmail())){
@@ -47,8 +51,18 @@ public class StudentService {
 
     }
 
+    public StudentResponse getMyProfile()
+    {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("USer not found"));
 
-    public StudentResponse updateById(long studentNumber, StudentRequest request) {
+        if (user.getStudent() == null) {
+            throw new ResourceNotFoundException("No student profile linked to this account");
+        }
+        return mapper.toResponse(user.getStudent());
+    }
+
+    public StudentResponse updateById(Long studentNumber, StudentRequest request) {
         if (!studentRepository.existsById(studentNumber)) {
            throw  new RuntimeException("Student number not found, try signing in first");
         }
@@ -79,7 +93,7 @@ public class StudentService {
 
     }
 
-    public StudentResponse findByID(long studentNumber)
+    public StudentResponse findByID(Long studentNumber)
     {
         if (!studentRepository.existsById(studentNumber))
         {
@@ -121,7 +135,7 @@ public class StudentService {
         return studentRepository.findByDateOfBirthBetween(date, later).stream().map(mapper::toResponse).toList();
     }
 
-    public String deleteById(long studentNumber)
+    public String deleteById(Long studentNumber)
     {
 
         if(!studentRepository.existsById(studentNumber))

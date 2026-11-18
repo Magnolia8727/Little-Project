@@ -26,7 +26,8 @@ public class CourseMapper {
         courseResponse.setCourseName(course.getCourseName());
         courseResponse.setCourseDescription(course.getCourseDescription());
         courseResponse.setId(course.getId());
-
+        courseResponse.setCreatedDate(course.getCreatedDate());
+        courseResponse.setUpdatedDate(course.getUpdatedDate());
         return courseResponse;
     }
 

@@ -31,7 +31,8 @@ public class SubjectMapper {
         subjectResponse.setId(subject.getId());
         subjectResponse.setCourseName(subject.getCourse().getCourseName());
         subjectResponse.setCourseId(subject.getCourse().getId());
-
+        subjectResponse.setUpdatedDate(subject.getUpdatedDate());
+        subjectResponse.setCreatedDate(subject.getCreatedDate());
         return subjectResponse;
     }
     public void updateEntityFromRequest(Subject currentSubject, SubjectRequest request, Course course) {

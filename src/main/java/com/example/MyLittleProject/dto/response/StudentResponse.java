@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class StudentResponse {
 
-    private long studentNumber;
+    private Long studentNumber;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
-    private int age;
+    private Integer age;
     private Gender gender;
     private String email;
     private LocalDateTime createdDate;
