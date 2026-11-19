@@ -18,4 +18,5 @@ public class RegisterRequest {
     private Role role;
 
     private Long studentNumber;
+    private String email;
 }

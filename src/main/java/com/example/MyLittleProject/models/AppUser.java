@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -45,4 +46,12 @@ public class AppUser implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
+    private String otp;
+    private LocalDateTime otpExpiry;
+    private boolean enabled = false;
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 }
